@@ -59,3 +59,31 @@ watcher.on('change', path => {
     socket.send(payload);
   }
 });
+
+/** @type {express.Handler} */
+const hmrMiddleware = async (req, res, next) => {
+  //
+
+  if (!req.url.endsWith(".js")) {
+    return next();
+  }
+
+  let client = await fs.readFile(path.join(process.cwd(), "client.js"), "utf8");
+  let content = await fs.readFile(path.join(process.cwd(), req.url), "utf8");
+
+  content = `
+  ${client}
+
+  hmrClient(import.meta)
+
+  ${content}
+  `;
+
+  res.type(".js");
+  res.send(content);
+};
+
+app.use(hmrMiddleware);
+app.use(express.static(process.cwd()));
+
+server.listen(8080, () => console.log("Listening on port 8080"));
