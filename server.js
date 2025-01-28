@@ -35,12 +35,16 @@ watcher.on('ready', () => {
 
 watcher.on('add', path => console.log('File added:', path));
 
-watcher.on('change', path => {
-  console.log('File changed:', path, 'at', new Date().toISOString());
+watcher.on('change', (filePath) => { // Rename the parameter to avoid shadowing
+  console.log('File changed:', filePath, 'at', new Date().toISOString());
+
+  // Calculate the relative path from the project root
+  const relativePath = `/${path.relative(process.cwd(), filePath)}`;
+
   if (socket) {
     const payload = JSON.stringify({
       type: "file:changed",
-      file: `/${path}`,
+      file: relativePath,
     });
     socket.send(payload);
   }
