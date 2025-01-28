@@ -15,6 +15,8 @@ class HotModule {
       return;
     }
 
+    console.clear();
+
     import(`${this.file}?t=${Date.now()}`).then((newMod) => {
       this.cb(newMod);
     });
@@ -37,9 +39,9 @@ if (!window.ws) {
   const ws = new window.WebSocket("ws://localhost:8080");
 
   ws.addEventListener("message", (msg) => {
-    const data = JSON.parse(msg.data);
+    const data = JSON.parse(msg.data)
     const mod = window.hotModules.get(data.file);
-    console.log(data.file);
+    console.log("Handling HMR for " + data.file);
     mod.handleAccept();
   });
 
