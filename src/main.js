@@ -1,16 +1,14 @@
-  import { Child } from './child.js'
 
 if (import.meta.hot) {
+ const timestamp = import.meta.hot.data.timestamp || performance.now();
+ console.log(`[HMR] Accepttt for ${import.meta.url} at ${timestamp.toFixed(3)} ms`);
+
   import.meta.hot.accept((newModule) => {
     if (newModule) {
-      console.log(`Handling hot sdssreload accept dsadsadsadsa ${import.meta.url}`);
       const $app = document.querySelector("#app");
-  	  const now = new Date().toLocaleTimeString();
-  	  $app.innerText = `Hello, dsadsssdsadsasdasdasdasda is ${now}\n\n`;
-  	  $app.appendChild(Child());
-
+      $app.innerText = `Updated at ${timestamp.toFixed(3)} ms\n\n`;
     }
+
+	import.meta.hot.prune();
   });
 }
-
-
