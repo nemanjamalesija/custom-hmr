@@ -1,3 +1,6 @@
+
+
+
 class HotModule {
   file;
   cb;
@@ -23,6 +26,7 @@ class HotModule {
   }
 }
 
+
 function hmrClient(mod) {
   const url = new URL(mod.url);
   const hot = new HotModule(url.pathname);
@@ -38,9 +42,14 @@ window.ws;
 if (!window.ws) {
   const ws = new window.WebSocket("ws://localhost:8080");
 
-  ws.addEventListener("message", (msg) => {
+  ws.addEventListener("message", async (msg) => {
     const data = JSON.parse(msg.data)
     const mod = window.hotModules.get(data.file);
+
+
+    console.log("data:", msg.data.file);
+    console.log("mod:", mod);
+
     console.log("Handling HMR for " + data.file);
     mod.handleAccept();
   });

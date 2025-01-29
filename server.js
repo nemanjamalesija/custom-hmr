@@ -6,6 +6,7 @@ import express from "express";
 import chokidar from "chokidar";
 import { WebSocket, WebSocketServer } from "ws";
 import { readFile } from "node:fs";
+import esbuild from 'esbuild'
 
 const app = express();
 const server = http.createServer(app);
@@ -50,6 +51,30 @@ watcher.on('change', (filePath) => { // Rename the parameter to avoid shadowing
   }
 });
 
+
+let analyze = async (entrypoint) => {
+  let result = await esbuild.build({
+    bundle: true,
+    entryPoints: [entrypoint],
+    metafile: true,
+    write: false,
+    platform: "node",
+    logLevel: "silent",
+    outdir: "dist",
+  })
+
+  let dependents = {}
+  for (let [input, meta] of Object.entries(result.metafile.inputs)) {
+    for (let imp of meta.imports) {
+      let rImpPath = path.resolve(imp.path)
+      dependents[rImpPath] = dependents[rImpPath] ?? []
+      dependents[rImpPath].push(path.resolve(input))
+    }
+  }
+  return dependents
+}
+
+
 /** @type {express.Handler} */
 const hmrMiddleware = async (req, res, next) => {
   //
@@ -60,6 +85,8 @@ const hmrMiddleware = async (req, res, next) => {
 
   let client = await fs.readFile(path.join(process.cwd(), "client.js"), "utf8");
   let content = await fs.readFile(path.join(process.cwd(), req.url), "utf8");
+
+    console.log("content:", content);
 
   content = `
   ${client}
