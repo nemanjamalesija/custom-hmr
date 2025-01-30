@@ -15,7 +15,6 @@ if (import.meta.hot) {
 
   import.meta.hot.dispose((data) => {
     data.count = count;
-    childElement.innerHTML = `${Math.random()}`
 
   });
 

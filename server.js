@@ -86,8 +86,6 @@ const hmrMiddleware = async (req, res, next) => {
   let client = await fs.readFile(path.join(process.cwd(), "client.js"), "utf8");
   let content = await fs.readFile(path.join(process.cwd(), req.url), "utf8");
 
-    console.log("content:", content);
-
   content = `
   ${client}
 
