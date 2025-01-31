@@ -1,26 +1,40 @@
-export let count = import.meta.hot?.data?.count ?? 0; // Restore count if it exists
-
+export let count;
 const incrementButton = document.querySelector("#increment");
 const countElement = document.querySelector("#count");
-const childElement = document.querySelector("#child");
-countElement.textContent = count;
 
-incrementButton.addEventListener("click", () => {
+
+setCount(0);
+
+export function setCount(newCount) {
+  count = newCount;
+  countElement.textContent = count;
+
+}
+export function incrementHandler() {
   count += 1;
   countElement.textContent = count;
-});
-
-if (import.meta.hot) {
-  import.meta.hot.data.count = count;
-
-  import.meta.hot.dispose((data) => {
-    data.count = count;
-
-  });
-
-  import.meta.hot.accept((newModule) => {
-    if (newModule) {
-      console.log(`Handling HMR for: ${import.meta.url}`);
-    }
-  });
 }
+
+export function Child() {
+
+  incrementButton.addEventListener("click", incrementHandler);
+
+  return { incrementButton, countElement }
+}
+
+
+
+// if (import.meta.hot) {
+//   import.meta.hot.data.count = count;
+
+//   import.meta.hot.dispose((data) => {
+//     data.count = count;
+
+//   });
+
+//   import.meta.hot.accept((newModule) => {
+//     if (newModule) {
+//       console.log(`Handling HMR for: ${import.meta.url}`);
+//     }
+//   });
+// }

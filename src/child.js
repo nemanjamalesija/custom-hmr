@@ -5,6 +5,7 @@ const countElement = document.querySelector("#count");
 const childElement = document.querySelector("#child");
 countElement.textContent = count;
 
+
 incrementButton.addEventListener("click", () => {
   count += 1;
   countElement.textContent = count;
